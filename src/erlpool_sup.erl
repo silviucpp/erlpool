@@ -9,10 +9,10 @@ start_link() ->
 
 init([]) ->
     Childrens = [
-        proccess(erlpool_manager, infinity)
+        process(erlpool_manager, infinity)
     ],
 
     {ok, { {one_for_one, 10, 1}, Childrens} }.
 
-proccess(Name, WaitForClose) ->
+process(Name, WaitForClose) ->
     {Name, {Name, start_link, []}, permanent, WaitForClose, worker, [Name]}.

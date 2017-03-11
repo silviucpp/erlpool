@@ -37,6 +37,23 @@ Args = [
 erlpool:start_pool(pool_name, Args).
 ```
 
+Or in case you want to use the `sys.config` you can use:
+
+```erlang
+[
+    {erlpool, [
+        {pools, [
+            {mypool, [
+                {size, 50},
+                {start_mfa, {benchmark_worker, start_link, [ [] ]} },
+                {supervisor_period, 1},
+                {supervisor_intensity, 1000}
+            ]}
+        ]}
+    ]}
+].
+```
+
 Arguments:
 
 - `size` : the pool size (how many workers are created and added in the supervisor)
