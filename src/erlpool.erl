@@ -7,12 +7,35 @@
 -define(POOL_SIZE(PoolName), erlpool_globals:PoolName()).
 
 -export([
+    start/0,
+    start/1,
+    stop/0,
     start_pool/2,
     stop_pool/1,
     pid/1,
     map/2,
     pool_size/1
 ]).
+
+-spec start() -> ok  | {error, any()}.
+
+start() ->
+    start(temporary).
+
+-spec start(permanent | transient | temporary) -> ok | {error, any()}.
+
+start(Type) ->
+    case application:ensure_all_started(erlpool, Type) of
+        {ok, _} ->
+            ok;
+        Other ->
+            Other
+    end.
+
+-spec stop() -> ok.
+
+stop() ->
+    application:stop(erlpool).
 
 -spec start_pool(atom(), [pool_option()]) -> ok | {error, any()}.
 
