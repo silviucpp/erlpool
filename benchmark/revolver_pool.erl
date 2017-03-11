@@ -3,7 +3,7 @@
 
 -behaviour(supervisor).
 
--export([start_link/2, init/1, pid/1]).
+-export([start_link/2, stop/1, init/1, pid/1]).
 
 start_link(Name, Args) ->
     case whereis(revolver_pool_sup) of
@@ -14,6 +14,10 @@ start_link(Name, Args) ->
         _ ->
             ok
     end.
+
+stop(Name) ->
+    exit(whereis(Name), shutdown),
+    exit(whereis(revolver_pool_sup), shutdown).
 
 init(Args) ->
     {mfa, MFA} = proplists:lookup(mfa, Args),

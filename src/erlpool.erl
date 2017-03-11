@@ -6,8 +6,11 @@
 
 -behaviour(supervisor).
 
+-define(SUPERVISOR_NAME(PoolName), list_to_atom(atom_to_list(?MODULE) ++ "_" ++ atom_to_list(PoolName) ++ "_sup")).
+
 -export([
     start_link/2,
+    stop/1,
     pid/1,
     map/2,
     %internals
@@ -18,8 +21,18 @@
 -spec start_link(atom(), [pool_option()]) -> {ok, pid()}.
 
 start_link(PoolName, PoolArgs) ->
-    SupName = list_to_atom(atom_to_list(?MODULE) ++ atom_to_list(PoolName) ++ "_sup"),
+    SupName = ?SUPERVISOR_NAME(PoolName),
     supervisor:start_link({local, SupName}, ?MODULE, [PoolName, PoolArgs]).
+
+-spec stop(atom()) -> boolean().
+
+stop(PoolName) ->
+    case whereis(?SUPERVISOR_NAME(PoolName)) of
+        undefined ->
+            true;
+        Pid ->
+            exit(Pid, shutdown)
+    end.
 
 -spec pid(atom()) -> pid().
 
