@@ -3,7 +3,7 @@ erlpool
 
 Erlang round-robin load balancer for Erlang processes based on ETS
 
-What is this?
+What erlpool does
 -----------
 
 Erlpool is a round-robin load balancer for Erlang processes meant mainly to be used with things like database connections. 
