@@ -14,6 +14,7 @@
     stop/1,
     pid/1,
     map/2,
+    pool_size/1,
     %internals
     init/1,
     start_worker/3
@@ -55,6 +56,11 @@ map(PoolName, Fun) ->
     end,
     Pids = ets:foldl(FunFoldl, [], PoolName),
     lists:map(Fun, Pids).
+
+-spec pool_size(atom()) -> non_neg_integer().
+
+pool_size(PoolName) ->
+    ?POOL_SIZE(PoolName).
 
 %internals
 
