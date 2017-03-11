@@ -1,0 +1,7 @@
+{application, erlpool, [
+    {description, "Erlang round-robin load balancer for Erlang processes based on ETS"},
+    {vsn, "1.0"},
+    {registered, []},
+    {applications, [kernel, stdlib]},
+    {env, []}
+]}.
