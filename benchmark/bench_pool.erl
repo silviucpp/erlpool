@@ -68,10 +68,10 @@ start(?ERLPOOL) ->
         {size, ?POOL_SIZE},
         {start_mfa, {?WORKER_MODULE, ?WORKER_FUN, [?WORKER_ARGS]}}
     ],
-    erlpool:start_link(?ERLPOOL, Args).
+    erlpool:start_pool(?ERLPOOL, Args).
 
 stop(?ERLPOOL, _S) ->
-    erlpool:stop(?ERLPOOL);
+    erlpool:stop_pool(?ERLPOOL);
 stop(?POOLBOY, _S) ->
     poolboy:stop(?POOLBOY);
 stop(?POOLER, _S) ->
