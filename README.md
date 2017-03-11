@@ -34,7 +34,7 @@ Args = [
     {supervisor_intensity, 1000}
 ],
 
-erlpool:start_link(pool_name, Args).
+erlpool:start_pool(pool_name, Args).
 ```
 
 Arguments:

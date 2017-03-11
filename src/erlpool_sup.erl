@@ -8,4 +8,11 @@ start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 init([]) ->
-    {ok, { {one_for_one, 5, 10}, []} }.
+    Childrens = [
+        proccess(erlpool_manager, infinity)
+    ],
+
+    {ok, { {one_for_one, 10, 1}, Childrens} }.
+
+proccess(Name, WaitForClose) ->
+    {Name, {Name, start_link, []}, permanent, WaitForClose, worker, [Name]}.
