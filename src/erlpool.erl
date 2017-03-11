@@ -7,6 +7,7 @@
 -behaviour(supervisor).
 
 -define(SUPERVISOR_NAME(PoolName), list_to_atom(atom_to_list(?MODULE) ++ "_" ++ atom_to_list(PoolName) ++ "_sup")).
+-define(POOL_SIZE(PoolName), erlpool_globals:PoolName()).
 
 -export([
     start_link/2,
@@ -37,8 +38,7 @@ stop(PoolName) ->
 -spec pid(atom()) -> pid().
 
 pid(PoolName) ->
-    PoolSize = erlpool_manager:pool_size(PoolName),
-    N = ets:update_counter(PoolName, sq, {2, 1, PoolSize, 1}),
+    N = ets:update_counter(PoolName, sq, {2, 1, ?POOL_SIZE(PoolName), 1}),
     [{N, Worker}] = ets:lookup(PoolName, N),
     Worker.
 

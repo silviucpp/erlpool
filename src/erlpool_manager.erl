@@ -3,8 +3,7 @@
 
 -export([
     init/0,
-    register/2,
-    pool_size/1
+    register/2
 ]).
 
 -define(POOL_MANAGER_TAB, erlpool_manager).
@@ -16,9 +15,6 @@ init() ->
 register(PoolName, PoolSize) ->
     ets:insert(?POOL_MANAGER_TAB, {PoolName, PoolSize}),
     compile_settings(ets:tab2list(?POOL_MANAGER_TAB)).
-
-pool_size(PoolName) ->
-    erlpool_globals:PoolName().
 
 compile_settings(SettingsList) ->
     code:purge(?GLOBALS_MODULE),
