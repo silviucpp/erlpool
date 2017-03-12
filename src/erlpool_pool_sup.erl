@@ -10,21 +10,12 @@
 
 -export([
     start_link/2,
-    stop/1,
     init/1,
     start_worker/3
 ]).
 
 start_link(PoolName, PoolArgs) ->
     supervisor:start_link({local, ?SUPERVISOR_NAME(PoolName)}, ?MODULE, [PoolName, PoolArgs]).
-
-stop(PoolName) ->
-    case whereis(?SUPERVISOR_NAME(PoolName)) of
-        undefined ->
-            true;
-        Pid ->
-            exit(Pid, normal)
-    end.
 
 %internals
 

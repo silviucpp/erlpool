@@ -6,6 +6,7 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
+    ok = erlpool_manager:init(),
     {ok, Pid} = erlpool_sup:start_link(),
     start_pools(),
     {ok, Pid}.
