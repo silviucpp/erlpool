@@ -9,8 +9,6 @@
     rem_pool/1
 ]).
 
--record(state, {}).
-
 init() ->
     ?POOL_MANAGER_TAB = ets:new(?POOL_MANAGER_TAB, [named_table, public, {read_concurrency, true}]),
     ok.
