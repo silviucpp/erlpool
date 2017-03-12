@@ -47,7 +47,8 @@ Or in case you want to use the `sys.config` you can use:
                 {size, 50},
                 {start_mfa, {benchmark_worker, start_link, [ [] ]} },
                 {supervisor_period, 1},
-                {supervisor_intensity, 1000}
+                {supervisor_intensity, 1000},
+                {supervisor_restart, permanent}
             ]}
         ]}
     ]}
@@ -60,6 +61,7 @@ Arguments:
 - `smart_mfa` : Defines the function call used to start the child process. It must be a module-function-arguments tuple `{M,F,A}` used as `apply(M,F,A)`
 - `supervisor_period` : the supervisor restart period in seconds (default to 1)
 - `supervisor_intensity` : the supervisor restart intensity (defaults to 100)
+- `supervisor_restart` : the supervisor restart strategy (permanent (default) | transient | temporary)
 
 If you are not familiar with supervisor settings check the [documentation][5]. Basically to prevent a supervisor from getting 
 into an infinite loop of child process terminations and restarts, a maximum restart intensity is defined using two integer values. 

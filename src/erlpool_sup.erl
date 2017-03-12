@@ -25,7 +25,7 @@ remove_pool(PoolName) ->
     end.
 
 init([]) ->
-    {ok, { {one_for_one, 10, 1}, []} }.
+    {ok, { {one_for_one, 1000, 1}, []} }.
 
 supervisor_childspec(Name, Module, WaitForClose, Args) ->
     {Name, {Module, start_link, Args}, transient, WaitForClose, supervisor, [Module]}.
