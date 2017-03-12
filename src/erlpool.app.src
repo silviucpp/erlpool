@@ -3,6 +3,7 @@
     {vsn, "1.0"},
     {registered, []},
     {applications, [kernel, stdlib]},
+    {included_applications, [dynamic_compile]},
     {mod, {erlpool_app, []}},
     {env, []}
 ]}.
