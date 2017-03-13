@@ -47,28 +47,42 @@ start_pool(PoolName, PoolArgs) ->
 stop_pool(PoolName) ->
     erlpool_manager:rem_pool(PoolName).
 
--spec pid(atom()) -> pid().
+-spec pid(atom()) -> pid() | {error, any()}.
 
 pid(PoolName) ->
-    N = ets:update_counter(PoolName, sq, {2, 1, ?POOL_SIZE(PoolName), 1}),
-    [{N, Worker}] = ets:lookup(PoolName, N),
-    Worker.
+    try
+        N = ets:update_counter(PoolName, sq, {2, 1, ?POOL_SIZE(PoolName), 1}),
+        [{N, Worker}] = ets:lookup(PoolName, N),
+        Worker
+    catch
+        _:Error ->
+            {error, Error}
+    end.
 
--spec map(atom(), fun()) -> [term()].
+-spec map(atom(), fun()) -> [term()] | {error, any()}.
 
 map(PoolName, Fun) ->
-    FunFoldl = fun({Id, Pid}, Acc) ->
-        case is_integer(Id) of
-            true ->
-                [Pid|Acc];
-            _ ->
-                Acc
-        end
-    end,
-    Pids = ets:foldl(FunFoldl, [], PoolName),
-    lists:map(Fun, Pids).
+    try
+        FunFoldl = fun({Id, Pid}, Acc) ->
+            case is_integer(Id) of
+                true ->
+                    [Pid|Acc];
+                _ ->
+                    Acc
+            end
+        end,
+        lists:map(Fun, ets:foldl(FunFoldl, [], PoolName))
+    catch
+        _:Error ->
+            {error, Error}
+    end.
 
--spec pool_size(atom()) -> non_neg_integer().
+-spec pool_size(atom()) -> non_neg_integer() | {error, any()}.
 
 pool_size(PoolName) ->
-    ?POOL_SIZE(PoolName).
+    try
+        ?POOL_SIZE(PoolName)
+    catch
+        _:Error ->
+            {error, Error}
+    end.
