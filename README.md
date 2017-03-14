@@ -45,6 +45,7 @@ Or in case you want to use the `sys.config` you can use:
         {pools, [
             {mypool, [
                 {size, 50},
+                {group, mygroup},
                 {start_mfa, {benchmark_worker, start_link, [ [] ]} },
                 {supervisor_period, 1},
                 {supervisor_intensity, 1000},
@@ -58,6 +59,8 @@ Or in case you want to use the `sys.config` you can use:
 Arguments:
 
 - `size` : the pool size (how many workers are created and added in the supervisor)
+- `group`: used to group multiple pools in a group. For example you have two different apps that are using erlpool and you want to restart/delete the 
+pools for app1. Using groups you can delete/restart all pools for a certain application. 
 - `smart_mfa` : Defines the function call used to start the child process. It must be a module-function-arguments tuple `{M,F,A}` used as `apply(M,F,A)`
 - `supervisor_period` : the supervisor restart period in seconds (default to 1)
 - `supervisor_intensity` : the supervisor restart intensity (defaults to 100)
@@ -68,17 +71,67 @@ into an infinite loop of child process terminations and restarts, a maximum rest
 Assuming the values `supervisor_intensity` and `supervisor_period`, then, if more than `supervisor_intensity` restarts occur within 
 `supervisor_period` seconds, the supervisor terminates all child processes and then itself. The intensity defaults to 100 and period defaults to 1.
 
-In order to get a pid in a round robbin fashion you do:
+API
+-------
+
+#### Create a pool at runtime
+
+```erlang 
+Args = [
+    {size, 20},
+    {start_mfa, {benchmark_worker, start_link, [WorkerArgs]}},
+    {supervisor_period, 1},
+    {supervisor_intensity, 1000}
+],
+
+ok = erlpool:start_pool(pool_name, Args).
+```
+
+#### Remove a pool at runtime
+
+```erlang
+ok = erlpool:stop_pool(pool_name).
+```
+
+#### Restart a pool
+
+Use the following function when you want to restart a pool
+
+```
+ok = erlpool:restart_pool(pool_name).
+```
+
+#### Get a pid from pool:
+
+To get a pid from a pool in a round robbin fashion you are using:
 
 ```erlang
 Pid = erlpool:pid(pool_name).
 ```
+
+#### Run a function over all pid's in a pool:
 
 In case you want to run a function over all pid's in the pool you can use the `map/2` function. For example the following
 function returns all pid's in a list:
 
 ```erlang
 erlpool:map(pool_name, fun(Pid) -> Pid end).
+```
+
+#### Stop all pools in a group
+
+To remove all pools in a group use: 
+
+```erlang
+ erlpool:stop_group(group_name).
+```
+
+#### Restart all pools in a group
+
+To restart all pools in a group use:
+
+```erlang
+ erlpool:restart_group(group_name).
 ```
 
 Performance testing

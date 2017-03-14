@@ -11,11 +11,15 @@
 -export([
     start_link/2,
     init/1,
-    start_worker/3
+    start_worker/3,
+    name/1
 ]).
 
 start_link(PoolName, PoolArgs) ->
     supervisor:start_link({local, ?SUPERVISOR_NAME(PoolName)}, ?MODULE, [PoolName, PoolArgs]).
+
+name(PoolName) ->
+    ?SUPERVISOR_NAME(PoolName).
 
 %internals
 

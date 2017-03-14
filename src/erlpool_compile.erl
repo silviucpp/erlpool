@@ -18,7 +18,7 @@ compile_settings(SettingsList) ->
 get_settings_code(SettingsList) ->
     binary_to_list(get_settings_code(SettingsList, <<>>, <<>>)).
 
-get_settings_code([{PoolName, PoolSize}|T], AccHeaders, AccBody) ->
+get_settings_code([{PoolName, PoolSize, _PoolGroup}|T], AccHeaders, AccBody) ->
     PoolNameBin = atom_to_binary(PoolName, latin1),
     PoolSizeBin = integer_to_binary(PoolSize),
 

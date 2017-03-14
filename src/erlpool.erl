@@ -12,6 +12,9 @@
     stop/0,
     start_pool/2,
     stop_pool/1,
+    restart_pool/1,
+    stop_group/1,
+    restart_group/1,
     pid/1,
     map/2,
     pool_size/1
@@ -46,6 +49,31 @@ start_pool(PoolName, PoolArgs) ->
 
 stop_pool(PoolName) ->
     erlpool_manager:rem_pool(PoolName).
+
+-spec restart_pool(atom()) -> boolean() | {error, any()}.
+
+restart_pool(PoolName) ->
+    case whereis(erlpool_pool_sup:name(PoolName)) of
+        undefined ->
+            false;
+        Pid ->
+            exit(Pid, kill)
+    end.
+
+-spec stop_group(term()) -> ok | {error, any()}.
+
+stop_group(GroupName) ->
+    erlpool_manager:rem_group(GroupName).
+
+-spec restart_group(term()) -> ok | {error, any()}.
+
+restart_group(GroupName) ->
+    case erlpool_manager:get_pools(GroupName) of
+        {ok, Pools} ->
+            lists:foreach(fun(P) -> restart_pool(P) end, Pools);
+        Error ->
+            Error
+    end.
 
 -spec pid(atom()) -> pid() | {error, any()}.
 
