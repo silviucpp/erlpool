@@ -14,6 +14,7 @@ groups() -> [
     {erlpool_group, [sequence], [
         test_map,
         test_pid_round_robin,
+        test_not_existing_pool,
         test_group
     ]}
 ].
@@ -37,7 +38,7 @@ test_map(_Config) ->
     Length2 = length(L2),
     Length1 = erlpool:pool_size(pool1),
     Length2 = erlpool:pool_size(pool2),
-    true.
+    ok.
 
 test_pid_round_robin(_Config) ->
     L1 = erlpool:map(pool1, fun(X) -> X end),
@@ -48,7 +49,13 @@ test_pid_round_robin(_Config) ->
         lists:delete(Pid, Acc)
     end,
     [] = lists:foldl(Fun, L1, lists:seq(1, Size)),
-    true.
+    ok.
+
+test_not_existing_pool(_Config) ->
+    {error, not_found} = erlpool:pid(dummy),
+    {error, not_found} = erlpool:map(dummy, fun(X) -> X end),
+    {error, not_found} = erlpool:pool_size(dummy),
+    ok.
 
 test_group(_Config) ->
 
@@ -95,5 +102,5 @@ test_group(_Config) ->
     NPG2 = whereis(erlpool_pool_sup:name(gpool2)),
     undefined = whereis(erlpool_pool_sup:name(gpool3)),
     undefined = whereis(erlpool_pool_sup:name(gpool4)),
-    true.
+    ok.
 
