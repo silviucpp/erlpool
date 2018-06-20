@@ -1,5 +1,4 @@
 -module(erlpool_utils).
--author("silviu.caragea").
 
 -export([env/1]).
 

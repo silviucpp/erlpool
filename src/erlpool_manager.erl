@@ -1,5 +1,4 @@
 -module(erlpool_manager).
--author("silviu.caragea").
 
 -define(POOL_MANAGER_TAB, erlpool_manager).
 

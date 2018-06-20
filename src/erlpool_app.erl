@@ -1,11 +1,11 @@
 -module(erlpool_app).
--author("silviu.caragea").
 
 -behaviour(application).
 
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
+    ok = erlpool_compile:compile_settings([]),
     ok = erlpool_manager:init(),
     {ok, Pid} = erlpool_sup:start_link(),
     start_pools(),

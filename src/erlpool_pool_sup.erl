@@ -1,7 +1,5 @@
 -module(erlpool_pool_sup).
 
--author("silviu.caragea").
-
 -include("erlpool.hrl").
 
 -behaviour(supervisor).

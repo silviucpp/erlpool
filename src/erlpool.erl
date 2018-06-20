@@ -1,10 +1,9 @@
 -module(erlpool).
 
--author("silviu.caragea").
-
 -include("erlpool.hrl").
 
--define(POOL_SIZE(PoolName), erlpool_globals:PoolName()).
+-define(POOL_SIZE(PoolName),
+    erlpool_globals:size(PoolName)).
 
 -export([
     start/0,
@@ -78,39 +77,49 @@ restart_group(GroupName) ->
 -spec pid(atom()) -> pid() | {error, any()}.
 
 pid(PoolName) ->
-    try
-        N = ets:update_counter(PoolName, sq, {2, 1, ?POOL_SIZE(PoolName), 1}),
-        [{N, Worker}] = ets:lookup(PoolName, N),
-        Worker
-    catch
-        _:Error ->
-            {error, Error}
+    case ?POOL_SIZE(PoolName) of
+        {ok, PoolSize} ->
+            try
+                N = ets:update_counter(PoolName, sq, {2, 1, PoolSize, 1}),
+                [{N, Worker}] = ets:lookup(PoolName, N),
+                Worker
+            catch
+                _:Error ->
+                    {error, Error}
+            end;
+        Error ->
+            Error
     end.
 
 -spec map(atom(), fun()) -> [term()] | {error, any()}.
 
 map(PoolName, Fun) ->
-    try
-        FunFoldl = fun({Id, Pid}, Acc) ->
-            case is_integer(Id) of
-                true ->
-                    [Pid|Acc];
-                _ ->
-                    Acc
-            end
-        end,
-        lists:map(Fun, ets:foldl(FunFoldl, [], PoolName))
-    catch
-        _:Error ->
-            {error, Error}
+    case ?POOL_SIZE(PoolName) of
+        {ok, _PoolSize} ->
+            try
+                FunFoldl = fun({Id, Pid}, Acc) ->
+                    case is_integer(Id) of
+                        true ->
+                            [Pid|Acc];
+                        _ ->
+                            Acc
+                    end
+                end,
+                lists:map(Fun, ets:foldl(FunFoldl, [], PoolName))
+            catch
+                _:Error ->
+                    {error, Error}
+            end;
+        Error ->
+            Error
     end.
 
 -spec pool_size(atom()) -> non_neg_integer() | {error, any()}.
 
 pool_size(PoolName) ->
-    try
-        ?POOL_SIZE(PoolName)
-    catch
-        _:Error ->
-            {error, Error}
+    case ?POOL_SIZE(PoolName) of
+        {ok, Size} ->
+            Size;
+        Error ->
+            Error
     end.
