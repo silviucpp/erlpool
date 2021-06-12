@@ -1,6 +1,6 @@
 {application, erlpool, [
     {description, "Erlang round-robin load balancer for Erlang processes based on ETS"},
-    {vsn, "1.2"},
+    {vsn, "1.3"},
     {registered, []},
     {applications, [kernel, stdlib]},
     {included_applications, [dynamic_compile]},
