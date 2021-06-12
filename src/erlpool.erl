@@ -15,6 +15,7 @@
     stop_group/1,
     restart_group/1,
     pid/1,
+    sticky_pid/2,
     map/2,
     pool_size/1
 ]).
@@ -82,6 +83,22 @@ pid(PoolName) ->
             try
                 N = ets:update_counter(PoolName, sq, {2, 1, PoolSize, 1}),
                 [{N, Worker}] = ets:lookup(PoolName, N),
+                Worker
+            catch
+                _:Error ->
+                    {error, Error}
+            end;
+        Error ->
+            Error
+    end.
+
+-spec sticky_pid(atom(), non_neg_integer()) -> pid() | {error, any()}.
+
+sticky_pid(PoolName, KeyHash) ->
+    case ?POOL_SIZE(PoolName) of
+        {ok, PoolSize} ->
+            try
+                [{_, Worker}] = ets:lookup(PoolName, KeyHash rem PoolSize),
                 Worker
             catch
                 _:Error ->
