@@ -1,10 +1,19 @@
 -module(integrity_test_SUITE).
 -author("silviu.caragea").
 
--include_lib("common_test/include/ct.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
--compile(export_all).
+-export([
+         all/0,
+         groups/0,
+         init_per_suite/1,
+         end_per_suite/1,
+         test_map/1,
+         test_pid_round_robin/1,
+         test_not_existing_pool/1,
+         test_group/1
+        ]).
+
 
 all() -> [
     {group, erlpool_group}
