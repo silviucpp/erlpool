@@ -6,6 +6,7 @@
     start_link/0,
     add_pool/2,
     remove_pool/1,
+    restart_pool/1,
     init/1
 ]).
 
@@ -20,6 +21,14 @@ remove_pool(PoolName) ->
     case supervisor:terminate_child(?MODULE, PoolName) of
         ok ->
             supervisor:delete_child(?MODULE, PoolName);
+        Error ->
+            Error
+    end.
+
+restart_pool(PoolName) ->
+    case supervisor:terminate_child(?MODULE, PoolName) of
+        ok ->
+            supervisor:restart_child(?MODULE, PoolName);
         Error ->
             Error
     end.

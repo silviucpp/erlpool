@@ -11,4 +11,4 @@ bench:
 
 ct:
 	mkdir -p log
-	rebar ct verbose=1
+	${REBAR} ct verbose=1

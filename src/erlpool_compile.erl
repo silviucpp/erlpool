@@ -17,7 +17,7 @@ get_settings_code(SettingsList) ->
     Export = "-export([size/1]).",
     Functions =
         lists:foldl(
-            fun({Name, Size, _Group}, Acc) ->
+            fun({Name, Size, _PoolArgs}, Acc) ->
                 [io_lib:format("size(~s) -> {ok, ~b};", [Name, Size]) | Acc]
             end, ["size(_) -> {error, not_found}."], SettingsList),
     merl:quote([Module, Export | Functions]).
