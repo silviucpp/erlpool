@@ -7,7 +7,8 @@
     new_pool/2,
     rem_pool/1,
     rem_group/1,
-    get_pools/1
+    get_pools/1,
+    add_worker/1
 ]).
 
 init() ->
@@ -64,3 +65,24 @@ get_pools(Group) ->
         _: Error ->
             {error, Error}
     end.
+
+add_worker(PoolName) ->
+    try
+        case ets:lookup(?POOL_MANAGER_TAB, PoolName) of
+            [{PoolName, Size, PoolArgs}] ->
+                Id = Size + 1,
+                case erlpool_pool_sup:add_worker(PoolName, Id, PoolArgs) of
+                    {ok, _} ->
+                        ets:update_counter(?POOL_MANAGER_TAB, PoolName, {2, 1}),
+                        erlpool_compile:compile_settings(ets:tab2list(?POOL_MANAGER_TAB));
+                    {error, Reason} ->
+                        {error, Reason}
+                end;
+            _ ->
+                {error, not_found}
+        end
+    catch
+        _: Error ->
+            {error, Error}
+    end.
+

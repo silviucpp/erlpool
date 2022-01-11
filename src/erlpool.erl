@@ -17,7 +17,8 @@
     pid/1,
     sticky_pid/2,
     map/2,
-    pool_size/1
+    pool_size/1,
+    add_worker/1
 ]).
 
 -spec start() -> ok  | {error, any()}.
@@ -140,3 +141,8 @@ pool_size(PoolName) ->
         Error ->
             Error
     end.
+
+-spec add_worker(atom()) -> ok | {error, any()}.
+
+add_worker(PoolName) ->
+    erlpool_manager:add_worker(PoolName).
