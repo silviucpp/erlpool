@@ -37,9 +37,9 @@ init_per_suite(Config) ->
 
 end_per_suite(_Config) ->
     ok = erlpool:stop_pool(pool1),
-    %let pool2 to be destroyed by the app supervisor
-    %disable the info report
+    %disable info report
     logger:add_handler_filter(default, ?MODULE, {fun(_,_) -> stop end, nostate}),
+    %let pool2 to be destroyed by the app supervisor
     erlpool:stop().
 
 test_map(_Config) ->
