@@ -18,8 +18,7 @@ new_pool(PoolName, PoolArgs) ->
     case erlpool_sup:add_pool(PoolName, PoolArgs) of
         {ok, _} ->
             PoolSize  = proplists:get_value(size, PoolArgs),
-            PoolGroup = proplists:get_value(group, PoolArgs, undefined),
-            ets:insert(?POOL_MANAGER_TAB, {PoolName, PoolSize, PoolGroup}),
+            ets:insert(?POOL_MANAGER_TAB, {PoolName, PoolSize, PoolArgs}),
             erlpool_compile:compile_settings(ets:tab2list(?POOL_MANAGER_TAB));
         Error ->
             Error
@@ -36,9 +35,9 @@ rem_pool(PoolName) ->
 
 rem_group(Group) ->
     try
-        RemoveFun = fun({PoolName, _Size, Gp}) ->
-            case Gp =:= Group of
-                true ->
+        RemoveFun = fun({PoolName, _Size, PoolArgs}) ->
+            case proplists:get_value(group, PoolArgs) of
+                Group ->
                     ok = rem_pool(PoolName);
                 _ ->
                     ok
@@ -52,9 +51,9 @@ rem_group(Group) ->
 
 get_pools(Group) ->
     try
-        GetFun = fun({PoolName, _Size, Gp}, Acc) ->
-            case Gp =:= Group of
-                true ->
+        GetFun = fun({PoolName, _Size, PoolArgs}, Acc) ->
+            case proplists:get_value(group, PoolArgs) of
+                Group ->
                     [PoolName|Acc];
                 _ ->
                     Acc

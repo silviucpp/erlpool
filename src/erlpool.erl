@@ -50,14 +50,14 @@ start_pool(PoolName, PoolArgs) ->
 stop_pool(PoolName) ->
     erlpool_manager:rem_pool(PoolName).
 
--spec restart_pool(atom()) -> boolean() | {error, any()}.
+-spec restart_pool(atom()) -> boolean().
 
 restart_pool(PoolName) ->
-    case whereis(erlpool_pool_sup:name(PoolName)) of
-        undefined ->
-            false;
-        Pid ->
-            exit(Pid, kill)
+    case erlpool_sup:restart_pool(PoolName) of
+        {ok, _} ->
+            true;
+        _ ->
+            false
     end.
 
 -spec stop_group(term()) -> ok | {error, any()}.
@@ -98,7 +98,7 @@ sticky_pid(PoolName, KeyHash) ->
     case ?POOL_SIZE(PoolName) of
         {ok, PoolSize} ->
             try
-                [{_, Worker}] = ets:lookup(PoolName, KeyHash rem PoolSize),
+                [{_, Worker}] = ets:lookup(PoolName, KeyHash rem PoolSize + 1),
                 Worker
             catch
                 _:Error ->
