@@ -11,7 +11,8 @@
          test_map/1,
          test_pid_round_robin/1,
          test_not_existing_pool/1,
-         test_group/1
+         test_group/1,
+         test_add_worker/1
         ]).
 
 
@@ -24,7 +25,8 @@ groups() -> [
         test_map,
         test_pid_round_robin,
         test_not_existing_pool,
-        test_group
+        test_group,
+        test_add_worker
     ]}
 ].
 
@@ -115,3 +117,9 @@ test_group(_Config) ->
     undefined = whereis(erlpool_pool_sup:name(gpool4)),
     ok.
 
+test_add_worker(_Config) ->
+    Size = erlpool:pool_size(pool1),
+    ok = erlpool:add_worker(pool1),
+    NewSize = Size + 1,
+    NewSize = erlpool:pool_size(pool1),
+    ok.
