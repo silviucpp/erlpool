@@ -10,6 +10,7 @@
     start_link/2,
     init/1,
     start_worker/3,
+    add_worker/3,
     name/1
 ]).
 
@@ -43,6 +44,13 @@ start_worker(Id, PoolTable, {M, F, A}) ->
     {ok, Pid} = erlang:apply(M, F, A),
     true = ets:insert(PoolTable, {Id, Pid}),
     {ok, Pid}.
+
+add_worker(PoolName, Id, PoolArgs) ->
+    SupName = name(PoolName),
+    SupRestartStrategy = proplists:get_value(supervisor_restart, PoolArgs, ?DEFAULT_SUP_RESTART_STRATEGY),
+    MFA = proplists:get_value(start_mfa, PoolArgs),
+    ChildSpec = children_specs(Id, SupRestartStrategy, [Id, PoolName, MFA]),
+    supervisor:start_child(SupName, ChildSpec).
 
 children_specs(Name, SupRestartStrategy, Args) ->
     {Name, {?MODULE, start_worker, Args}, SupRestartStrategy, 2000, worker, [?MODULE]}.
