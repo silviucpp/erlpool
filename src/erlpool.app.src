@@ -1,9 +1,27 @@
 {application, erlpool, [
     {description, "Erlang round-robin load balancer for Erlang processes based on ETS"},
-    {vsn, "1.3"},
+    {licenses, ["MIT"]},
+    {links,[{"Github","https://github.com/silviucpp/erlpool"}]},
+    {vsn, "1.4.0"},
     {registered, []},
-    {applications, [kernel, stdlib]},
-    {included_applications, []},
+    {applications, [
+        kernel,
+        stdlib
+    ]},
     {mod, {erlpool_app, []}},
-    {env, []}
+    {env, []},
+    {files, [
+        "LICENSE*",
+        "*.MD",
+        "Makefile",
+        "rebar.config",
+        "rebar.lock",
+        "include/*.hrl",
+        "src/*.erl",
+        "src/*.src",
+        "test/*.erl",
+        "test/cover.spec",
+        "test/sys.config",
+        "benchmarks/*.erl"
+    ]}
 ]}.
