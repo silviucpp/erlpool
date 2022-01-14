@@ -1,6 +1,10 @@
 erlpool
 ================
 
+[![Build Status](https://travis-ci.com/silviucpp/erlpool.svg?branch=master)](https://travis-ci.com/github/silviucpp/erlpool)
+![GitHub](https://img.shields.io/github/license/silviucpp/erlpool)
+[![Hex.pm](https://img.shields.io/hexpm/v/erlkaf)](https://hex.pm/packages/erlpool)
+
 Erlang round-robin load balancer for Erlang processes based on ETS
 
 What erlpool does
@@ -18,9 +22,8 @@ Quick start
 
 Getting all deps and compile:
 
-```
-rebar get-deps
-rebar compile
+```sh
+rebar3 compile
 ```
 
 Let's suppose you have a `gen_server` similar with the `benchmark_worker` from benchmark folder. You create a pool for this in the following way:
@@ -138,19 +141,25 @@ Performance testing
 -----------
 
 The code is in `benchmark` folder. The test sends 100000 requests from 4000 concurrent processes to a gen_server that 
-replies with ok. The pools has 20 workers.
+replies with ok. The pools have 20 workers.
+
+```sh
+make bench
+### erlpool 231 ms 500000 req/sec 
+### cuesport 664 ms 166666 req/sec 
+### revolver 755 ms 142857 req/sec 
+### poolboy 1246 ms 83333 req/sec 
+### pooler 2587 ms 40000 req/sec 
+```
+
+You can run it yourself using `make bench` 
+
+Running tests
+-----------
 
 ```
-erl -pa ebin -pa deps/*/ebin -noshell -eval "bench_pool:bench(100000, 4000)." -eval "init:stop()."
-### erlpool 351 ms 333333 req/sec 
-### cuesport 1412 ms 71428 req/sec 
-### revolver 1165 ms 90909 req/sec 
-### poolboy 1806 ms 55555 req/sec 
-### pooler 3609 ms 27777 req/sec 
+make ct
 ```
-
-You can run it yourself using `make bench` after you copy the sources from benchmark folder in src and compile. 
-You need to uncomment also the benchmarks dependencies in `rebar.config`
 
 [1]:https://github.com/odo/revolver
 [2]:https://github.com/esl/cuesport

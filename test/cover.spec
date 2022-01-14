@@ -1,6 +1,6 @@
 {level, details}.
 {incl_dirs, [
-   "../ebin"
+   "../_build/test/lib/erlpool/ebin"
 ]}.
 
 {excl_mods, [
