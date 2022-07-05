@@ -4,8 +4,12 @@
 
 -export([compile_settings/1]).
 
+-include_lib("syntax_tools/include/merl.hrl").
+
 compile_settings(SettingsList) ->
-    case merl:compile_and_load(get_settings_code(SettingsList)) of
+    Forms = get_settings_code(SettingsList),
+    file:write_file("/tmp/erlpool_globals_gen.erl", erl_prettypr:format(erl_syntax:form_list(Forms))),
+    case merl:compile_and_load(Forms) of
         {ok, _Bin} ->
             ok;
         Err ->
@@ -13,12 +17,15 @@ compile_settings(SettingsList) ->
     end.
 
 get_settings_code(SettingsList) ->
-    Module = io_lib:format("-module(~s).", [?GLOBALS_MODULE]),
-    Export = "-export([size/1]).",
-    Functions =
-        lists:foldl(
-            fun({Name, Size, _PoolArgs}, Acc) ->
-                [io_lib:format("size(~s) -> {ok, ~b};", [Name, Size]) | Acc]
-            end, ["size(_) -> {error, not_found}."], SettingsList),
-    merl:quote([Module, Export | Functions]).
+    ModuleName = ?GLOBALS_MODULE,
+    Module = ?Q("-module('@ModuleName@')."),
+    Export = ?Q("-export([size/1])."),
+    Function = gen(SettingsList, []),
+    [Module, Export,  Function].
+
+gen([{Name, Size, _PoolArgs} | R], Acc) ->
+    gen(R, [?Q("(_@Name@) -> {ok, _@Size@}") | Acc]);
+gen([], Acc) ->
+    Clauses = lists:reverse([?Q("(_) -> {error, not_found}") | Acc]),
+    erl_syntax:function(merl:term(size), Clauses).
 
