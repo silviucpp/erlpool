@@ -70,24 +70,23 @@ test_not_existing_pool(_Config) ->
     ok.
 
 test_group(_Config) ->
-
-    Args = [{start_mfa, {dummy_worker, start_link, [[]]}}],
-    ok = erlpool:start_pool(gpool1, [{size, 2}, {group, g1} |Args]),
+    Args = [{start_mfa, {dummy_worker, start_link, [[{dummy1, 1}, {dummy2, 2}]]}}],
+    ok = erlpool:start_pool('node_pool1_127.0.0.1_6379', [{size, 2}, {group, g1} |Args]),
     ok = erlpool:start_pool(gpool2, [{size, 3}, {group, g1} |Args]),
     ok = erlpool:start_pool(gpool3, [{size, 4}, {group, g2} |Args]),
     ok = erlpool:start_pool(gpool4, [{size, 5}, {group, g2} |Args]),
 
-    PG1 = whereis(erlpool_pool_sup:name(gpool1)),
+    PG1 = whereis(erlpool_pool_sup:name('node_pool1_127.0.0.1_6379')),
     PG2 = whereis(erlpool_pool_sup:name(gpool2)),
     PG3 = whereis(erlpool_pool_sup:name(gpool3)),
     PG4 = whereis(erlpool_pool_sup:name(gpool4)),
 
-    true = erlpool:restart_pool(gpool1),
+    true = erlpool:restart_pool('node_pool1_127.0.0.1_6379'),
     false = erlpool:restart_pool(gpool5),
 
     timer:sleep(100),
 
-    PG11 = whereis(erlpool_pool_sup:name(gpool1)),
+    PG11 = whereis(erlpool_pool_sup:name('node_pool1_127.0.0.1_6379')),
 
     ?assert(PG11 =/= undefined),
     ?assert(PG11 =/= PG1),
@@ -96,7 +95,7 @@ test_group(_Config) ->
 
     timer:sleep(100),
 
-    NPG1 = whereis(erlpool_pool_sup:name(gpool1)),
+    NPG1 = whereis(erlpool_pool_sup:name('node_pool1_127.0.0.1_6379')),
     NPG2 = whereis(erlpool_pool_sup:name(gpool2)),
     NPG3 = whereis(erlpool_pool_sup:name(gpool3)),
     NPG4 = whereis(erlpool_pool_sup:name(gpool4)),
@@ -110,7 +109,7 @@ test_group(_Config) ->
 
     timer:sleep(100),
 
-    NPG1 = whereis(erlpool_pool_sup:name(gpool1)),
+    NPG1 = whereis(erlpool_pool_sup:name('node_pool1_127.0.0.1_6379')),
     NPG2 = whereis(erlpool_pool_sup:name(gpool2)),
     undefined = whereis(erlpool_pool_sup:name(gpool3)),
     undefined = whereis(erlpool_pool_sup:name(gpool4)),
