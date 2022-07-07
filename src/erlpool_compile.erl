@@ -28,4 +28,3 @@ gen([{Name, Size, _PoolArgs} | R], Acc) ->
 gen([], Acc) ->
     Clauses = lists:reverse([?Q("(_) -> {error, not_found}") | Acc]),
     erl_syntax:function(merl:term(size), Clauses).
-
