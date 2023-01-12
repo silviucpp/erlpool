@@ -50,8 +50,9 @@ start_worker(Id, PoolTable, {M, F, A}) ->
 add_worker(PoolName, Id, PoolArgs) ->
     SupName = name(PoolName),
     SupRestartStrategy = proplists:get_value(supervisor_restart, PoolArgs, ?DEFAULT_SUP_RESTART_STRATEGY),
+    SupShutdown = proplists:get_value(supervisor_shutdown, PoolArgs, ?DEFAULT_SUP_SHUTDOWN),
     MFA = proplists:get_value(start_mfa, PoolArgs),
-    ChildSpec = children_specs(Id, SupRestartStrategy, [Id, PoolName, MFA]),
+    ChildSpec = children_specs(Id, SupRestartStrategy, SupShutdown, [Id, PoolName, MFA]),
     supervisor:start_child(SupName, ChildSpec).
 
 children_specs(Id, SupRestartStrategy, SupShutdown, Args) ->
