@@ -27,13 +27,15 @@ init([PoolName, PoolArgs]) ->
     SupRestartPeriod = proplists:get_value(supervisor_period, PoolArgs, ?DEFAULT_MAX_PERIOD_SEC),
     SupIntensity = proplists:get_value(supervisor_intensity, PoolArgs, ?DEFAULT_MAX_INTENSITY),
     SupRestartStrategy = proplists:get_value(supervisor_restart, PoolArgs, ?DEFAULT_SUP_RESTART_STRATEGY),
+    SupShutdown = proplists:get_value(supervisor_shutdown, PoolArgs, ?DEFAULT_SUP_SHUTDOWN),
+
     MFA = proplists:get_value(start_mfa, PoolArgs),
 
     PoolTable = ets:new(PoolName, [named_table, public, set, {write_concurrency, true}, {read_concurrency, true}]),
     true = ets:insert(PoolTable, [{sq, 0}]),
 
     CreateFun = fun(Id) ->
-        children_specs(Id, SupRestartStrategy, [Id, PoolTable, MFA])
+        children_specs(Id, SupRestartStrategy, SupShutdown, [Id, PoolTable, MFA])
     end,
 
     Ch = lists:map(CreateFun, lists:seq(1, PoolSize)),
@@ -52,5 +54,5 @@ add_worker(PoolName, Id, PoolArgs) ->
     ChildSpec = children_specs(Id, SupRestartStrategy, [Id, PoolName, MFA]),
     supervisor:start_child(SupName, ChildSpec).
 
-children_specs(Name, SupRestartStrategy, Args) ->
-    {Name, {?MODULE, start_worker, Args}, SupRestartStrategy, 2000, worker, [?MODULE]}.
+children_specs(Id, SupRestartStrategy, SupShutdown, Args) ->
+    {Id, {?MODULE, start_worker, Args}, SupRestartStrategy, SupShutdown, worker, [?MODULE]}.

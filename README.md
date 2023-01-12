@@ -34,7 +34,8 @@ Args = [
     {size, 20},
     {start_mfa, {benchmark_worker, start_link, [WorkerArgs]}},
     {supervisor_period, 1},
-    {supervisor_intensity, 1000}
+    {supervisor_intensity, 1000},
+    {supervisor_shutdown, 5000}
 ],
 
 erlpool:start_pool(pool_name, Args).
@@ -52,7 +53,8 @@ Or in case you want to use the `sys.config` you can use:
                 {start_mfa, {benchmark_worker, start_link, [ [] ]} },
                 {supervisor_period, 1},
                 {supervisor_intensity, 1000},
-                {supervisor_restart, permanent}
+                {supervisor_restart, permanent},
+                {supervisor_shutdown, 5000}
             ]}
         ]}
     ]}
@@ -68,6 +70,7 @@ pools for app1. Using groups you can delete/restart all pools for a certain appl
 - `supervisor_period` : the supervisor restart period in seconds (default to 1)
 - `supervisor_intensity` : the supervisor restart intensity (defaults to 100)
 - `supervisor_restart` : the supervisor restart strategy (permanent (default) | transient | temporary)
+- `supervisor_shutdown` : defines how the worker process must be terminated  (brutal_kill | timeout()) - default 2000.
 
 If you are not familiar with supervisor settings check the [documentation][5]. Basically to prevent a supervisor from getting 
 into an infinite loop of child process terminations and restarts, a maximum restart intensity is defined using two integer values. 

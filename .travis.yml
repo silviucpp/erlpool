@@ -17,8 +17,16 @@ matrix:
       otp_release: 25.0
 
     - os: osx
-      osx_image: xcode12.2
+      osx_image: xcode12.4
       language: generic
+      env:
+        - HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=true
+        - HOMEBREW_NO_INSTALL_UPGRADE=true
+        - HOMEBREW_NO_INSTALL_CLEANUP=true
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - /usr/local/Homebrew
 
 before_script:
 
