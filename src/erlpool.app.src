@@ -2,11 +2,12 @@
     {description, "Erlang round-robin load balancer for Erlang processes based on ETS"},
     {licenses, ["MIT"]},
     {links,[{"Github","https://github.com/silviucpp/erlpool"}]},
-    {vsn, "1.4.2"},
+    {vsn, "1.4.3"},
     {registered, []},
     {applications, [
         kernel,
-        stdlib
+        stdlib,
+        syntax_tools
     ]},
     {mod, {erlpool_app, []}},
     {env, []},
