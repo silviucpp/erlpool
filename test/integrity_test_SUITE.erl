@@ -2,18 +2,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
--export([
-         all/0,
-         groups/0,
-         init_per_suite/1,
-         end_per_suite/1,
-         test_map/1,
-         test_pid_round_robin/1,
-         test_not_existing_pool/1,
-         test_group/1,
-         test_add_worker/1
-        ]).
-
+-compile(export_all).
 
 all() -> [
     {group, erlpool_group}
@@ -25,6 +14,7 @@ groups() -> [
         test_pid_round_robin,
         test_not_existing_pool,
         test_group,
+        test_args_include_worker_id,
         test_add_worker
     ]}
 ].
@@ -113,6 +103,26 @@ test_group(_Config) ->
     NPG2 = whereis(erlpool_pool_sup:name(gpool2)),
     undefined = whereis(erlpool_pool_sup:name(gpool3)),
     undefined = whereis(erlpool_pool_sup:name(gpool4)),
+    ok.
+
+test_args_include_worker_id(_Config) ->
+    Args = [{start_mfa, {dummy_worker, start_link, []}}, {args_include_worker_id, true}],
+    ok = erlpool:start_pool(pool_test_args_include_worker_id, [{size, 5} |Args]),
+
+    L = erlpool:map(pool_test_args_include_worker_id, fun(Pid) ->
+        gen_server:call(Pid, args)
+    end),
+
+    ?assertEqual([1,2,3,4,5], lists:sort(L)),
+
+    ok = erlpool:add_worker(pool_test_args_include_worker_id),
+
+    L2 = erlpool:map(pool_test_args_include_worker_id, fun(Pid) ->
+        gen_server:call(Pid, args)
+    end),
+
+    ?assertEqual([1,2,3,4,5, 6], lists:sort(L2)),
+
     ok.
 
 test_add_worker(_Config) ->

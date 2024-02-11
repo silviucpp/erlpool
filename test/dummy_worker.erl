@@ -12,14 +12,16 @@
     code_change/3
 ]).
 
-start_link(_Args) ->
-    gen_server:start_link(?MODULE, [], []).
+start_link(Args) ->
+    gen_server:start_link(?MODULE, Args, []).
 
 init(Args) ->
     {ok, Args}.
 
 handle_call(get, _From, State) ->
     {reply, <<"ok">>, State};
+handle_call(args, _From, State) ->
+    {reply, State, State};
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 

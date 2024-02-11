@@ -29,13 +29,11 @@ init([PoolName, PoolArgs]) ->
     SupRestartStrategy = proplists:get_value(supervisor_restart, PoolArgs, ?DEFAULT_SUP_RESTART_STRATEGY),
     SupShutdown = proplists:get_value(supervisor_shutdown, PoolArgs, ?DEFAULT_SUP_SHUTDOWN),
 
-    MFA = proplists:get_value(start_mfa, PoolArgs),
-
     PoolTable = ets:new(PoolName, [named_table, public, set, {write_concurrency, true}, {read_concurrency, true}]),
     true = ets:insert(PoolTable, [{sq, 0}]),
 
     CreateFun = fun(Id) ->
-        children_specs(Id, SupRestartStrategy, SupShutdown, [Id, PoolTable, MFA])
+        children_specs(Id, SupRestartStrategy, SupShutdown, [Id, PoolTable, get_mfa(Id, PoolArgs)])
     end,
 
     Ch = lists:map(CreateFun, lists:seq(1, PoolSize)),
@@ -51,9 +49,20 @@ add_worker(PoolName, Id, PoolArgs) ->
     SupName = name(PoolName),
     SupRestartStrategy = proplists:get_value(supervisor_restart, PoolArgs, ?DEFAULT_SUP_RESTART_STRATEGY),
     SupShutdown = proplists:get_value(supervisor_shutdown, PoolArgs, ?DEFAULT_SUP_SHUTDOWN),
-    MFA = proplists:get_value(start_mfa, PoolArgs),
-    ChildSpec = children_specs(Id, SupRestartStrategy, SupShutdown, [Id, PoolName, MFA]),
+
+    ChildSpec = children_specs(Id, SupRestartStrategy, SupShutdown, [Id, PoolName, get_mfa(Id, PoolArgs)]),
     supervisor:start_child(SupName, ChildSpec).
 
 children_specs(Id, SupRestartStrategy, SupShutdown, Args) ->
     {Id, {?MODULE, start_worker, Args}, SupRestartStrategy, SupShutdown, worker, [?MODULE]}.
+
+get_mfa(Id, PoolArgs) ->
+    MFA0 = proplists:get_value(start_mfa, PoolArgs),
+
+    case proplists:get_value(args_include_worker_id, PoolArgs, false) of
+        true ->
+            {M, F, A} = MFA0,
+            {M, F, [Id|A]};
+        _ ->
+            MFA0
+    end.
