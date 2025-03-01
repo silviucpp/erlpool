@@ -1,7 +1,7 @@
 erlpool
 ================
 
-[![Build Status](https://travis-ci.com/silviucpp/erlpool.svg?branch=master)](https://travis-ci.com/github/silviucpp/erlpool)
+[![Build Status](https://app.travis-ci.com/silviucpp/erlpool.svg?branch=master)](https://travis-ci.com/github/silviucpp/erlpool)
 ![GitHub](https://img.shields.io/github/license/silviucpp/erlpool)
 [![Hex.pm](https://img.shields.io/hexpm/v/erlpool)](https://hex.pm/packages/erlpool)
 

@@ -6,19 +6,19 @@ matrix:
   include:
     - os: linux
       dist: bionic
-      otp_release: 24.3.1
+      otp_release: 25.3.2.6
 
     - os: linux
       dist: focal
-      otp_release: 24.3.1
+      otp_release: 27.0
 
     - os: linux
       dist: jammy
-      otp_release: 25.2.1
+      otp_release: 26.1.1
 
 before_script:
 
-- curl https://s3.amazonaws.com/rebar3/rebar3 --output rebar3 && chmod +x rebar3
+    - curl https://s3.amazonaws.com/rebar3/rebar3 --output rebar3 && chmod +x rebar3
 
 script:
     - ./rebar3 compile
