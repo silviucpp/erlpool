@@ -2,7 +2,10 @@
 
 -behaviour(application).
 
--export([start/2, stop/1]).
+-export([
+    start/2,
+    stop/1
+]).
 
 start(_StartType, _StartArgs) ->
     ok = erlpool_compile:compile_settings([]),
@@ -18,7 +21,6 @@ start_pools() ->
     FunPool = fun({Name, Args}) ->
         ok = erlpool:start_pool(Name, Args)
     end,
-
     lists:foreach(FunPool, get_pools()).
 
 get_pools() ->
